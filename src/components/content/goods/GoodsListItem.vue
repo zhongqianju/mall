@@ -59,7 +59,7 @@
   }
 
   .goods-info .price {
-    color: var(--color-high-text);
+    color: var(--color-tint);
     margin-right: 20px;
   }
 

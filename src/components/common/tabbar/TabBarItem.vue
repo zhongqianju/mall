@@ -24,7 +24,7 @@
       link:String,
       textColor:{
         type:String,
-        default:'red'
+        default:'#ff8198'
       }
     },
     computed:{
