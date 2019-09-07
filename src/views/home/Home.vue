@@ -3,15 +3,18 @@
     <tab-bar>
       <slot slot="navBarCenter">购物街</slot>
     </tab-bar>
+    <tab-control v-show="tabControl1Show"  :title="['流行','新款','精选']" class="tabcontrol1" ref="tabcontrol1" @getTabControlIndex="itemClick" />
+
     <scroll class="wrapper" ref="wrapper"
             :probeType="3"
             @scrollPosition="getScrollPosition"
             :pullUpLoad="true"
             @pullingUp="getMore">
-      <home-swiper :banners="banners"></home-swiper>
+
+      <home-swiper :banners="banners" @imageLoad="imageLoad"></home-swiper>
       <home-recommend-information :recommends="recommends"></home-recommend-information>
       <home-feature></home-feature>
-      <tab-control :title="['流行','新款','精选']" @getTabControlIndex="itemClick"></tab-control>
+      <tab-control :title="['流行','新款','精选']" @getTabControlIndex="itemClick" ref="tabcontrol2"/>
       <goods-list :goodslist="goods[currentTabType].list"></goods-list>
     </scroll>
     <back-top @click.native="backTopClick" v-show="isMore1000"></back-top>
@@ -42,6 +45,8 @@
         banners:[],
         recommends:[],
         isMore1000:false,
+        tabControlTop:0,
+        tabControl1Show:false,
         currentTabType:'pop',
         goods:{
           pop:{page:0,list:[]},
@@ -66,6 +71,13 @@
       this.getGoodsData('new',1)
       this.getGoodsData('sell',1)
     },
+    mounted() {
+      const refresh = this.debounce(this.$refs.wrapper.refresh,50)
+      this.$bus.$on('imgLoad', () => {
+        // this.$refs.wrapper.refresh();
+        refresh()
+      })
+    },
     methods:{
       /*
       * 网络请求的方法
@@ -88,6 +100,10 @@
       /*
       * 事件监听的方法
       * */
+      imageLoad(){
+        this.tabControlTop = this.$refs.tabcontrol2.$el.offsetTop - 40;
+      },
+      //根据子组件tabControl点击，获取对应的点击项对其操作
       itemClick(i) {
         switch (i) {
           case 0 :{
@@ -103,20 +119,40 @@
             break;
           }
         }
+        this.$refs.tabcontrol1.currentIndex = i;
+        this.$refs.tabcontrol2.currentIndex = i;
 
       },
       backTopClick() {
+        //可以通过refs拿到组件中的属性和方法，scrollTo(x,y,ms)
         this.$refs.wrapper.scroll.scrollTo(0,0,500)
       },
+      //控制回到顶部图标的显示和隐藏
       getScrollPosition(position) {
         this.isMore1000 = -position.y > 1000;
+        //控制tabcontrol的显示和隐藏
+        if(-position.y >= this.tabControlTop) {
+          this.tabControl1Show = true;
+        }else {
+          this.tabControl1Show = false;
+        }
       },
       getMore() {
         //加载更多数据
         this.getGoodsData(this.currentTabType)
 
         //解决使用better-scroll时，容易产生的 bug。由于页面加载就把能够滑动的距离计算好，所以滚到一定距离不能滚动
-        this.$refs.wrapper.scroll.refresh();
+        // this.$refs.wrapper.scroll.refresh();
+      },
+      //防抖动函数的封装
+      debounce(func,delay) {
+        let timer = null
+        return function () {
+          if(timer) clearTimeout(timer)
+          timer = setTimeout(()=> {
+            func()
+          },delay)
+        }
       }
 
     }
@@ -124,11 +160,13 @@
 </script>
 
 <style scoped>
-  #home {
-    padding-top: 44px;
-  }
   .wrapper {
     height: calc(100vh - 93px);
     overflow: hidden;
+    margin-top: 44px;
+  }
+  .tabcontrol1 {
+    position: absolute;
+    width: 100%;
   }
 </style>

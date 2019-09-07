@@ -2,7 +2,7 @@
 
   <div class="goods-list-item">
     <a :href="goodsitem.link">
-      <img :src="goodsitem.show.img" alt="">
+      <img :src="goodsitem.show.img" alt="" @load="imgLoad">
     </a>
     <div class="goods-info">
       <p class="desc">{{goodsitem.title}}</p>
@@ -25,6 +25,11 @@
         }
       }
     },
+    methods: {
+      imgLoad() {
+        this.$bus.$emit('imgLoad')
+      }
+    }
 
   }
 </script>
