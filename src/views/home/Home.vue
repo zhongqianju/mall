@@ -47,6 +47,7 @@
         isMore1000:false,
         tabControlTop:0,
         tabControl1Show:false,
+        leaveY:0,
         currentTabType:'pop',
         goods:{
           pop:{page:0,list:[]},
@@ -77,6 +78,13 @@
         // this.$refs.wrapper.refresh();
         refresh()
       })
+    },
+    activated() {
+      this.$refs.wrapper.scroll.scrollTo(0,this.leaveY)
+      this.$refs.wrapper.scroll.refresh()
+    },
+    deactivated() {
+      this.leaveY = this.$refs.wrapper.scroll.y;
     },
     methods:{
       /*

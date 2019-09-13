@@ -1,7 +1,7 @@
 <template>
 
-  <div class="goods-list-item">
-    <a :href="goodsitem.link">
+  <div class="goods-list-item" @click="goodsItemClick">
+    <a>
       <img :src="goodsitem.show.img" alt="" @load="imgLoad">
     </a>
     <div class="goods-info">
@@ -28,6 +28,9 @@
     methods: {
       imgLoad() {
         this.$bus.$emit('imgLoad')
+      },
+      goodsItemClick() {
+        this.$router.push('/detail/' + this.goodsitem.iid)
       }
     }
 

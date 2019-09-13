@@ -38,7 +38,7 @@
     width: 60px;
   }
   .center {
-    flex:1;
+    width: 100%;
   }
 
 </style>
