@@ -11,7 +11,7 @@
       <detail-goods-info :detailInfo="detailInfo" @imageLoad="imageLoad" ref="goodsinfo"></detail-goods-info>
       <detail-param-info :param-info="paramInfo" ref="paramInfo"/>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addCart = "addCart"></detail-bottom-bar>
     <back-top @click.native="backTopClick" v-show="isMore1000"></back-top>
   </div>
 </template>
@@ -58,6 +58,7 @@
           this.topImages = res.result.itemInfo.topImages
           //获取商品基本信息
           this.goodsInfo = new Goods(res.result.itemInfo,res.result.columns, data.shopInfo.services)
+          // console.log(this.goodsInfo)
           //获取店铺信息
           this.shopInfo = new Shop(data.shopInfo)
           //商品详细信息
@@ -65,6 +66,21 @@
           //商品参数信息
           this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
 
+        })
+      },
+      addCart() {
+        //获取购物车需要展示的信息，对象的形式
+        const product = {};
+        product.image = this.topImages[0];
+        product.title = this.goodsInfo.title;
+        product.desc = this.goodsInfo.desc;
+        product.price = this.goodsInfo.realPrice;
+        product.iid = this.iid;
+        product.newPrice = this.newPrice;
+
+        //将商品添加购物车里 vuex
+        this.$store.dispatch('addCart',product).then(res => {
+          console.log(res)
         })
       },
       getScrollPosition(position) {
@@ -85,7 +101,7 @@
         this.$refs.bar.currentIndex = i;
 
 
-          this.isMore1000 = -position.y > 1000;
+        this.isMore1000 = -position.y > 1000;
 
 
       },
@@ -107,7 +123,6 @@
           this.scrollY.push(this.$refs.goodsinfo.$el.offsetTop);
         },20);
         refresh()
-
       },
       itemClick(i) {
         this.$refs.wrapper.scroll.scrollTo(0,-this.scrollY[i],200)
