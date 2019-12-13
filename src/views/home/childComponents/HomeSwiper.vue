@@ -5,12 +5,10 @@
       :key="i"
       @touchstart="touchStart"
       @touchmove="touchMove"
-      @touchend="touchEnd(i)">
-      <div>
-        <a :href="item.link" >
+      @touchend="touchEnd">
+        <div  :@click="test(item.link)" >
           <img :src="item.image" alt="" @load="imageLoad">
-        </a>
-      </div>
+        </div>
     </van-swipe-item>
   </van-swipe>
 </template>
@@ -38,16 +36,26 @@
        * 拖动事件的处理
        */
       touchStart: function (e) {
-        this.clickFlag = false;
+        this.falg = false;
       },
 
       touchMove: function (e) {
-        this.clickFlag = false;
+        this.falg = true;
       },
 
-      touchEnd: function (position) {
-        this.clickFlag = false;
+      touchEnd: function (e) {
+        if( !this.falg ) {
+          window.location.href=this.link;
+        }
       },
+      test:function (url) {
+        this.link=url;
+      }
+    },
+    data(){
+      return{
+        link:null
+      }
     }
   }
 </script>
