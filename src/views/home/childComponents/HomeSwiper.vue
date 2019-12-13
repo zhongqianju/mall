@@ -1,9 +1,16 @@
 <template>
   <van-swipe :autoplay="3000" indicator-color="white" class="vanSwiper">
-    <van-swipe-item v-for="(item,i) in banners" :key="i">
-      <a :href="item.link">
-        <img :src="item.image" alt="" @load="imageLoad">
-      </a>
+    <van-swipe-item
+      v-for="(item,i) in banners"
+      :key="i"
+      @touchstart="touchStart"
+      @touchmove="touchMove"
+      @touchend="touchEnd(i)">
+      <div>
+        <a :href="item.link" >
+          <img :src="item.image" alt="" @load="imageLoad">
+        </a>
+      </div>
     </van-swipe-item>
   </van-swipe>
 </template>
@@ -26,7 +33,21 @@
     methods :{
       imageLoad(){
         this.$emit('imageLoad')
-      }
+      },
+      /**
+       * 拖动事件的处理
+       */
+      touchStart: function (e) {
+        this.clickFlag = false;
+      },
+
+      touchMove: function (e) {
+        this.clickFlag = false;
+      },
+
+      touchEnd: function (position) {
+        this.clickFlag = false;
+      },
     }
   }
 </script>
